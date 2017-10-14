@@ -1,36 +1,35 @@
 # Navigation
-alias cd="pushd . >> /dev/null;cd"
-alias back="popd >> /dev/null"
-alias ld="dirs -p | nl -v 0"
-alias cls="dirs -c;"
-alias ..="pwd;cd ..;pwd;"
-alias ...="pwd;cd ../..;pwd;"
-alias ....="pwd;cd ../../..;pwd;"
-alias .....="pwd;cd ../../../..;pwd;"
-alias ll="ls -la"
-alias +x="chmod +x"
-alias g2="goto"
+alias cd='pushd . >> /dev/null;cd'
+alias back='popd >> /dev/null'
+alias ld='dirs -p | nl -v 0'
+alias cls='dirs -c;'
+alias ..='pwd;cd ..;pwd;'
+alias ...='pwd;cd ../..;pwd;'
+alias ....='pwd;cd ../../..;pwd;'
+alias .....='pwd;cd ../../../..;pwd;'
+alias ll='ls -la'
+alias +x='chmod +x'
+alias g2='goto'
 
 # Applications
-alias intellij="open -a \"IntelliJ IDEA CE\""
-alias code="open -a \"Visual Studio Code\""
-alias c.="code ."
+alias intellij='open -a \"IntelliJ IDEA CE\"'
+alias code='open -a \"Visual Studio Code\"'
+alias c.='code .'
 alias stree='open -a SourceTree'
-alias firefox="open -a Charles;open -a Firefox";
 
 # Docker cleanup
-alias clearcont="docker rm $(docker ps -a -q)"
-alias clearimages="docker rmi $(docker images -q)"
-alias cld="clearcont;clearimages;docker system prune"
+alias clearcont='docker rm $(docker ps -a -q)'
+alias clearimages='docker rmi $(docker images -q)'
+alias cld='clearcont;clearimages;docker system prune'
 
 # Docker build / run
-alias dc="docker-compose"
-alias dcbuild="docker-compose build --no-cache"
-alias dcup="docker-compose up"
-alias buildup="dcbuild;dcup"
-alias dcrun="docker-compose run --rm"
-alias burn="buildup;dcrun"
-alias drun="docker run -it"
+alias dc='docker-compose'
+alias dcbuild='docker-compose build --no-cache'
+alias dcup='docker-compose up'
+alias buildup='dcbuild;dcup'
+alias dcrun='docker-compose run --rm'
+alias burn='buildup;dcrun'
+alias drun='docker run -it'
 
 # mkdir and go to it or go to it if already existing
 function mkcd() {
@@ -81,3 +80,15 @@ function clone() {
   cd $clone_dir
 }
 
+function origin() {
+  git init
+  pwd=`pwd`
+  path=`echo ${pwd#$src/} | sed 's/\//:/'`
+  git remote add origin "git@$path.git"
+  if [ ! -z $1 ] && [ $1="push" ]
+  then
+    git add .
+    git commit -m "Initial commit"
+    git push -u origin master
+  fi
+}
