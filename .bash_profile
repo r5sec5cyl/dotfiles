@@ -1,3 +1,5 @@
+export src=$GOPATH/src
+
 # Navigation
 alias cd='pushd . >> /dev/null;cd'
 alias back='popd >> /dev/null'
@@ -10,6 +12,11 @@ alias .....='pwd;cd ../../../..;pwd;'
 alias ll='ls -la'
 alias +x='chmod +x'
 alias g2='goto'
+
+# Shortcuts
+alias src="cd $src"
+alias github="cd $src/github.com"
+alias gitlab="cd $src/gitlab.com"
 
 # Applications
 alias intellij='open -a \"IntelliJ IDEA CE\"'
