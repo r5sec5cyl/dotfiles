@@ -11,18 +11,14 @@ venv() {
 }
 
 new_venv() {
-  name="${@: -1}"
-  params=""
+  local name="${@: -1}"
+  local params=$@
   [ -z $1 ] && echo "please provide virtual env name" && read name
-  for i in "$@"
-  do
-    if [ "$i" != "$name" ]; then
-      params="$params $i"
-    fi
-  done
+  [ -z $name ] && name=$(basename "$PWD")
+  params="${params[@]:1}"
   virtualenv$params "$HOME/envs/$name"
-  cp "~/envs/default/pip.conf" "~/envs/$name/pip.conf"
-  xx ~/envs/$name/bin/*
-  xx ~/envs/$name/*
+  cp "$HOME/envs/default/pip.conf" "$HOME/envs/$name/pip.conf"
+  xx $HOME/envs/$name/bin/*
+  xx $HOME/envs/$name/*
   venv "$name"
 }
