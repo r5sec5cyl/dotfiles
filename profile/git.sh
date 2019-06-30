@@ -1,22 +1,24 @@
+# git.sh
 alias bro='browse'
 alias forcepush='git push origin `git rev-parse --abbrev-ref HEAD` --force'
+alias fp=forcepush
 
 alias or='open_repo'
 alias tt='newtab open_repo'
 
 repo_info() {
   dir=`pwd`
-  [[ $dir != *"$GOPATH/src/"* ]] && export git_local_path="." && return 1
-  path=`echo ${dir#$GOPATH/src}`
-  count=$(echo "${path}" | awk -F"/" '{print NF-1}')
+  [[ $dir != *"$DEVPATH/src/"* ]] && export git_local_path="." && return 1
+  current_path=`echo ${dir#$DEVPATH/src}`
+  count=$(echo "${current_path}" | awk -F"/" '{print NF-1}')
   export git_path=""
-  [ $count -ge 1 ] && export git_domain=$(echo $path | cut -d'/' -f2) && git_path=$git_domain || export git_domain=""
-  [ $count -ge 2 ] && export git_org=$(echo $path | cut -d'/' -f3) && git_path="$git_path/$git_org" || export git_org=""
-  [ $count -ge 3 ] && export git_repo=$(echo $path | cut -d'/' -f4) && git_path="$git_path/$git_repo" || export git_repo=""
-  export git_tree=`echo ${dir#$GOPATH/src/$git_domain/$git_org/$git_repo/}`
-  export git_local_path="$GOPATH/src/$git_path"
+  [ $count -ge 1 ] && export git_domain=$(echo $current_path | cut -d'/' -f2) && git_path=$git_domain || export git_domain=""
+  [ $count -ge 2 ] && export git_org=$(echo $current_path | cut -d'/' -f3) && git_path="$git_path/$git_org" || export git_org=""
+  [ $count -ge 3 ] && export git_repo=$(echo $current_path | cut -d'/' -f4) && git_path="$git_path/$git_repo" || export git_repo=""
+  export git_tree=`echo ${dir#$DEVPATH/src/$git_domain/$git_org/$git_repo/}`
+  export git_local_path="$DEVPATH/src/$git_path"
   [ $git_tree != $dir ] || export git_tree=""
-  export git_branch=`git rev-parse --abbrev-ref HEAD`
+  [ ! -z $git_repo ] && export git_branch=`git rev-parse --abbrev-ref HEAD`
 
   if [ "-s" != "$1" ] ;
   then
@@ -36,7 +38,7 @@ clone() {
   fi
   echo $repo
   clone_dir=$(echo $repo | sed "s/.*:\//:\//g" | sed "s/git@/:\/\//g" | sed "s/:\/\///g" | sed "s/:/\//g" | sed "s/\.git//g")
-  clone_dir="$GOPATH/src/$clone_dir"
+  clone_dir="$DEVPATH/src/$clone_dir"
   git clone $repo $clone_dir
   cd $clone_dir
 }
@@ -56,26 +58,26 @@ origin() {
 
 open_repo() {
   repo_info -s
-  cd "$GOPATH/src/$git_domain/$git_org/$1" 2>/dev/null
+  cd "$DEVPATH/src/$git_domain/$git_org/$1" 2>/dev/null
   if [ $? -ne 0 ]; then
-    cd "$GOPATH/src/$git_domain/$git_org/"
+    cd "$DEVPATH/src/$git_domain/$git_org/"
     goto "$1"
   fi
 }
 
 browse() {
   repo_info -s || (echo "no repo found" && return 1)
-  path="$git_domain/$git_org/$git_repo"
-  [ ! -z $git_tree ] && [ $git_tree != "" ] && path="$path/tree/$git_branch/$git_tree" && [ ! -z $1 ] && path="$path/$1"
-  open -a "Google Chrome" "http://$path"
+  current_path="$git_domain/$git_org/$git_repo"
+  [ ! -z $git_tree ] && [ $git_tree != "" ] && current_path="$current_path/tree/$git_branch/$git_tree" && [ ! -z $1 ] && current_path="$current_path/$1"
+  open -a "Google Chrome" "http://$current_path"
 }
 
 st() {
   repo_info -s || (echo "no repo found" && return 1)
-  open -a "SourceTree 2" "$GOPATH/src/$git_path"
+  stree "$DEVPATH/src/$git_path"
 }
 
 base() {
   repo_info -s || (echo "no repo found" && return 1)
-  cd "$GOPATH/src/$git_path"
+  cd "$DEVPATH/src/$git_path"
 }

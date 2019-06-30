@@ -1,9 +1,8 @@
+# java.sh
 alias worldcom='mvn clean install'
 alias sbr='mvn spring-boot:run'
 alias cr='cargorun'
 alias vcr='worldcom;jcr'
-
-alias intellij='open -a "IntelliJ IDEA CE"'
 
 alias kafkaup='zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties &'
 alias kafkadown='zookeeper-server-stop'

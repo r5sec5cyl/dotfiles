@@ -1,6 +1,8 @@
+# navigation.sh
 alias cd='pushd . >> /dev/null;cd'
 alias back='popd >> /dev/null'
 alias ld='dirs -p | nl -v 0'
+alias rv='revisit'
 alias cls='newtab;exit'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -12,13 +14,24 @@ alias g2='goto'
 alias gd='go_deep'
 alias gf='go_find'
 
+export src=$DEVPATH/src
+export github=$src/github.com
+export gitlab=$src/gitlab.com
+
+alias github="cd $github"
+alias gitlab="cd $gitlab"
+
 newtab() {
-  osascript -e 'tell application "Terminal" to activate' -e 'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'
-  if [ $# -gt 0 ]; then
-    cmd="tell application \"Terminal\" to do script \"$@\" in front window"
-    osascript \
-      -e "tell application \"Terminal\" to activate" \
-      -e "$cmd" &> /dev/null
+  if [[ "$OSTYPE" =~ "darwin" ]]; then
+    osascript -e 'tell application "Terminal" to activate' -e 'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'
+    if [ $# -gt 0 ]; then
+      cmd="tell application \"Terminal\" to do script \"$@\" in front window"
+      osascript \
+        -e "tell application \"Terminal\" to activate" \
+        -e "$cmd" &> /dev/null
+    fi
+  else
+    echo "newtab currently only valid for macos"
   fi
 }
 
@@ -38,6 +51,12 @@ b() {
   do
     back
   done
+}
+
+revisit() {
+  export choice_set=`dirs -p | grep -i ".*$1.*"`
+  get_choice
+  [ "$choice_set" != "" ] && eval "cd $choice_set"
 }
 
 # go to directory that matches search
