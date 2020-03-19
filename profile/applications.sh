@@ -8,6 +8,7 @@ alias o.='open .'
 alias stree='open -a "SourceTree"'
 alias chfox='open -a Charles;open -a Firefox'
 alias excel='open -a "Microsoft Excel"'
+alias chrome='open -a "Google Chrome"'
 
 alias ports='lsof -i | grep -E "(LISTEN|ESTABLISHED)"'
 alias epc='code $PROFILE_DIR'
