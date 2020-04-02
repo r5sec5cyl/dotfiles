@@ -1,3 +1,4 @@
+#!/bin/bash
 # java.sh
 alias worldcom='mvn clean install'
 alias sbr='mvn spring-boot:run'

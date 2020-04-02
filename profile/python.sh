@@ -1,3 +1,4 @@
+#!/bin/bash
 # python.sh
 pipup() {
   curl https://bootstrap.pypa.io/get-pip.py | python

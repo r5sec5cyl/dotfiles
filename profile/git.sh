@@ -1,3 +1,4 @@
+#!/bin/bash
 # git.sh
 alias bro='browse'
 alias forcepush='git push origin `git rev-parse --abbrev-ref HEAD` --force'
@@ -6,14 +7,15 @@ alias fp=forcepush
 alias or='open_repo'
 alias tt='newtab open_repo'
 
-repo_info() {
+repo_info() { ## details of a repo; defaults to git info, uses path as backup
   git status > /dev/null 2>&1 && git rev-parse --abbrev-ref HEAD > /dev/null 2>&1 && is_git=1 || is_git=0
   if [ "$is_git" -gt 0 ] ; then
     export git_origin=`git ls-remote --get-url`
     export git_local_path=`git rev-parse --show-toplevel`
-    export git_domain=`echo $git_origin | cut -d'@' -f2 | cut -d':' -f1`
-    export git_org=`echo $git_origin | cut -d':' -f2 | cut -d'/' -f1`
-    export git_repo=`echo $git_origin | cut -d'/' -f2 | rev | cut -c5- | rev`
+    local parts=$(echo $git_origin | sed 's#.git$##g' | sed 's#[@/:]# #g')
+    export git_domain=$(awk '{print $2}' <<< $parts)
+    export git_org=$(awk '{print $3}' <<< $parts)
+    export git_repo=$(awk '{print $4}' <<< $parts)
     pwd=`pwd`
     export git_tree=`echo ${pwd#$git_local_path}`
     export git_branch=`git rev-parse --abbrev-ref HEAD`
@@ -21,20 +23,20 @@ repo_info() {
     repo_info_path_based -s
   fi
 
-
   if [ "-s" != "$1" ] ;
   then
-    echo "origin (git_origin):  $git_origin"
-    echo "path (git_local_path):  $git_local_path"
-    echo "domain (git_domain):  $git_domain"
-    echo "org (git_org):  $git_org"
-    echo "repo (git_repo):  $git_repo"
-    echo "tree (git_tree):  $git_tree"
-    echo "branch (git_branch):  $git_branch"
+    local output_format="${YELLOW}%-17s${LT_GREEN}%7s:${DEFAULT_FMT} %s\n"
+    printf "$output_format" "(git_origin)" "origin" "$git_origin"
+    printf "$output_format" "(git_local_path)" "path" "$git_local_path"
+    printf "$output_format" "(git_domain)" "domain" "$git_domain"
+    printf "$output_format" "(git_org)" "org" "$git_org"
+    printf "$output_format" "(git_repo)" "repo" "$git_repo"
+    printf "$output_format" "(git_tree)" "tree" "$git_tree"
+    printf "$output_format" "(git_branch)" "branch" "$git_branch"
   fi
 }
 
-repo_info_path_based() {
+repo_info_path_based() { ## details of a repo based on path
   dir=`pwd`
   [[ $dir != *"$DEVPATH/src/"* ]] && export git_local_path="." && return 1
   current_path=`echo ${dir#$DEVPATH/src}`
@@ -45,20 +47,22 @@ repo_info_path_based() {
   [ $count -ge 3 ] && export git_repo=$(echo $current_path | cut -d'/' -f4) && git_path="$git_path/$git_repo" || export git_repo=""
   export git_tree=`echo ${dir#$DEVPATH/src/$git_domain/$git_org/$git_repo}`
   export git_local_path="$DEVPATH/src/$git_path"
-  [ $git_tree != $dir ] || export git_tree=""
+  [ "$git_tree" != "$dir" ] || export git_tree=""
   [ ! -z $git_repo ] && export git_branch=`git rev-parse --abbrev-ref HEAD`
 
   if [ "-s" != "$1" ] ;
   then
-    echo "domain (git_domain):  $git_domain"
-    echo "org (git_org):  $git_org"
-    echo "repo (git_repo):  $git_repo"
-    echo "tree (git_tree):  $git_tree"
-    echo "branch (git_branch):  $git_branch"
+    local output_format="${YELLOW}%-17s${LT_GREEN}%7s:${DEFAULT_FMT} %s\n"
+    printf "$output_format" "(git_local_path)" "path" "$git_local_path"
+    printf "$output_format" "(git_domain)" "domain" "$git_domain"
+    printf "$output_format" "(git_org)" "org" "$git_org"
+    printf "$output_format" "(git_repo)" "repo" "$git_repo"
+    printf "$output_format" "(git_tree)" "tree" "$git_tree"
+    printf "$output_format" "(git_branch)" "branch" "$git_branch"
   fi
 }
 
-clone() {
+clone() { ## clones a git repo into appropriate directory
   repo=$1
   sepcount=$(sed "s/[^:\/@]//g" <<< "$repo" | wc -m)
   if [[ $sepcount -le 2 ]] ; then
@@ -78,7 +82,7 @@ clone() {
   cd $clone_dir
 }
 
-origin() {
+origin() { ## sets origin remote of git repo
   git init
   repo_info -s || (echo "no repo found" && return 1)
   repo="git@$git_domain:$git_org/$git_repo.git"
@@ -91,7 +95,7 @@ origin() {
   fi
 }
 
-open_repo() {
+open_repo() { ## opens another repo in same org (alias: or)
   repo_info -s
   cd "$DEVPATH/src/$git_domain/$git_org/$1" 2>/dev/null
   if [ $? -ne 0 ]; then
@@ -100,19 +104,19 @@ open_repo() {
   fi
 }
 
-browse() {
+browse() { ## opens the repo (or org) in Chrome (alias: bro)
   repo_info -s || (echo "no repo found" && return 1)
   current_path="$git_domain/$git_org/$git_repo"
   [ ! -z $git_tree ] && [ $git_tree != "" ] && current_path="$current_path/tree/$git_branch$git_tree" && [ ! -z $1 ] && current_path="$current_path/$1"
   open -a "Google Chrome" "http://$current_path"
 }
 
-st() {
+st() { ## opens repo in SourceTree
   repo_info -s || (echo "no repo found" && return 1)
   stree "$git_local_path"
 }
 
-base() {
+base() { ## return to the base directory of the repo
   repo_info -s || (echo "no repo found" && return 1)
-  cd "$git_path"
+  cd "$git_local_path"
 }
