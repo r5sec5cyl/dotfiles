@@ -1,5 +1,5 @@
 #!/bin/bash
-# public
+# docker.sh
 # Docker cleanup
 alias clearcont='docker rm $(docker ps -a -q)'
 alias clearimages='docker rmi $(docker images -a -q)'

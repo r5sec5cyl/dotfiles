@@ -23,8 +23,7 @@ repo_info() { ## details of a repo; defaults to git info, uses path as backup
     repo_info_path_based -s
   fi
 
-  if [ "-s" != "$1" ] ;
-  then
+  if ! contains_flag -s "$@" ; then
     local output_format="${YELLOW}%-17s${LT_GREEN}%7s:${DEFAULT_FMT} %s\n"
     printf "$output_format" "(git_origin)" "origin" "$git_origin"
     printf "$output_format" "(git_local_path)" "path" "$git_local_path"
@@ -50,8 +49,7 @@ repo_info_path_based() { ## details of a repo based on path
   [ "$git_tree" != "$dir" ] || export git_tree=""
   [ ! -z $git_repo ] && export git_branch=`git rev-parse --abbrev-ref HEAD`
 
-  if [ "-s" != "$1" ] ;
-  then
+  if ! contains_flag -s "$@" ; then
     local output_format="${YELLOW}%-17s${LT_GREEN}%7s:${DEFAULT_FMT} %s\n"
     printf "$output_format" "(git_local_path)" "path" "$git_local_path"
     printf "$output_format" "(git_domain)" "domain" "$git_domain"
