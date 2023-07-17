@@ -7,18 +7,20 @@ alias fp=forcepush
 alias or='open_repo'
 alias tt='newtab open_repo'
 
+alias upstream='git upstream'
+
 repo_info() { ## details of a repo; defaults to git info, uses path as backup
   git status > /dev/null 2>&1 && git rev-parse --abbrev-ref HEAD > /dev/null 2>&1 && is_git=1 || is_git=0
   if [ "$is_git" -gt 0 ] ; then
-    export git_origin=`git ls-remote --get-url`
-    export git_local_path=`git rev-parse --show-toplevel`
+    export git_origin=$(git ls-remote --get-url)
+    export git_local_path=$(git rev-parse --show-toplevel)
     local parts=$(echo $git_origin | sed 's#.git$##g' | sed 's#[@/:]# #g')
     export git_domain=$(awk '{print $2}' <<< $parts)
     export git_org=$(awk '{print $3}' <<< $parts)
     export git_repo=$(awk '{print $4}' <<< $parts)
     pwd=`pwd`
-    export git_tree=`echo ${pwd#$git_local_path}`
-    export git_branch=`git rev-parse --abbrev-ref HEAD`
+    export git_tree=$(echo ${pwd#$git_local_path})
+    export git_branch=$(git rev-parse --abbrev-ref HEAD)
   else
     repo_info_path_based -s
   fi

@@ -8,3 +8,5 @@ export SHELL_LIB_SETTINGS=$(dirname $SHELL_LIB_DIR)/settings
 for file in $(ls -1 $SHELL_LIB_DIR | grep -i ".sh$"); do
   source "$SHELL_LIB_DIR/$file";
 done;
+
+export PATH="$PATH:$SHELL_LIB_DIR/path"
