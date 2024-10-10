@@ -95,3 +95,10 @@ shell_lib() { ## list shell library functions (alias: lib)
   sed 's/\([^\s-]*\).sh/\1/' | \
   awk '{file=$1;$1="";cmd=$2;$2="";printf "\033[92m%-12s \033[96m%25s\033[0m %s\n", file, cmd, $0}';
 }
+
+alias dts='timestamp'
+timestamp() { ## list shell library functions (alias: dts)
+  date
+  time $@
+  date
+}

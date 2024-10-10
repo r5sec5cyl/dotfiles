@@ -53,25 +53,25 @@ b() { ## go back in navigation history n times (n defaults to 1)
 }
 
 revisit() { ## navigate to directory from navigation history (alias rv)
-  export choice_set=`dirs -p | grep -i ".*$1.*"`
+  export choice_set=`dirs -p | grep -i ".*$1.*" | grep -i ".*$2.*" | grep -i ".*$3.*"`
   get_choice
   [ "$choice_set" != "" ] && eval "cd $choice_set"
 }
 
 goto() { ## go to directory that matches search (alias g2) (max one level deep)
-  export choice_set=`ls -AF1 | grep "/" | grep -i ".*$1.*"` #ls -ad *$1*/ 2>/dev/null
+  export choice_set=`ls -AF1 | grep "/" | grep -i ".*$1.*" | grep -i ".*$2.*" | grep -i ".*$3.*"` #ls -ad *$1*/ 2>/dev/null
   get_choice
   [ "$choice_set" != "" ] && cd "$choice_set"
 }
 
 go_deep() { ## go to directory that matches search any number of levels deep (alias gd)
-  export choice_set=`find . -type d | grep -i ".*$1.*"`
+  export choice_set=`find . -type d | grep -i ".*$1.*" | grep -i ".*$2.*" | grep -i ".*$3.*"`
   get_choice $@
   [ "$choice_set" != "" ] && cd "$choice_set"
 }
 
 go_find() { ## match a file any number of levels deep (alias gf)
-  export choice_set=`find . | grep -i ".*$1.*"`
-  get_choice $1
+  export choice_set=`find . | grep -i ".*$1.*" | grep -i ".*$2.*" | grep -i ".*$3.*"`
+  get_choice $@
   [ "$choice_set" != "" ] && ([ ! -z $2 ] && cd $(dirname "$choice_set") || eval "$2$choice_set$3")
 }
