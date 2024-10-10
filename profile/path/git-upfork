@@ -1,0 +1,27 @@
+if [[ -z "$1" ]]; then
+    target_fork=upstream
+    target_branch=main
+else
+    target="$1"
+    if [[ $target == *":"* ]]; then
+        target_fork=$(echo $target | sed 's/:.*//')
+        target_branch=$(echo $target | sed 's/.*://')
+    else
+        target_fork=upstream
+        target_branch=$target
+    fi
+fi
+
+echo $target_fork " ----- " $target_branch
+
+exit 0
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+git checkout $target_branch
+
+git --no-optional-locks fetch upstream 
+git --no-optional-locks pull --commit --rebase=false upstream $target_branch
+
+git push -f origin $target_branch
+
+git checkout $current_branch

@@ -7,7 +7,7 @@ alias fp=forcepush
 alias or='open_repo'
 alias tt='newtab open_repo'
 
-alias upstream='git upstream'
+alias upfork='git upfork'
 
 repo_info() { ## details of a repo; defaults to git info, uses path as backup
   git status > /dev/null 2>&1 && git rev-parse --abbrev-ref HEAD > /dev/null 2>&1 && is_git=1 || is_git=0
