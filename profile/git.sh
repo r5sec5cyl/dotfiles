@@ -10,10 +10,21 @@ alias tt='newtab open_repo'
 alias upfork='git upfork'
 
 repo_info() { ## details of a repo; defaults to git info, uses path as backup
-  git status > /dev/null 2>&1 && git rev-parse --abbrev-ref HEAD > /dev/null 2>&1 && is_git=1 || is_git=0
+  export git_local_path=$(git rev-parse --show-toplevel 2> /dev/null)
+  if [ -z "$git_local_path" ] ; then # not a git repo
+    export git_origin=""
+    export git_domain=""
+    export git_org=""
+    export git_repo=""
+    export git_tree=""
+    export git_branch=""
+    local is_git=0
+  else
+    local is_git=1
+  fi
+  
   if [ "$is_git" -gt 0 ] ; then
     export git_origin=$(git ls-remote --get-url)
-    export git_local_path=$(git rev-parse --show-toplevel)
     local parts=$(echo $git_origin | sed 's#.git$##g' | sed 's#[@/:]# #g')
     export git_domain=$(awk '{print $2}' <<< $parts)
     export git_org=$(awk '{print $3}' <<< $parts)
