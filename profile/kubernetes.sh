@@ -1,9 +1,8 @@
 #!/bin/bash
 # k8s.sh
-alias kc=kubectl
 alias ka=kubeadm
 alias mk=minikube
-alias k=kc
+alias k=kubectl
 alias kb=kubebuilder
 alias kz=kustomize
 
