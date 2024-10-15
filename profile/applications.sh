@@ -1,6 +1,6 @@
 #!/bin/bash
 # applications.sh
-alias code='open -a "Visual Studio Code"'
+# alias code='open -a "Visual Studio Code"'
 alias ij='open -a "IntelliJ IDEA CE"'
 alias c.='repo_info -s 2>/dev/null;code $git_local_path'
 alias i.='repo_info -s 2>/dev/null;ij $git_local_path'
